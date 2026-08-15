@@ -1,0 +1,66 @@
+{
+  "schema": "nextos-framework-release-pin-v1",
+  "port_id": "angrybirds",
+  "port_version": "1.1.2-test.3",
+  "source_repository": "https://github.com/NextOs-Ports/angrybirds-nextos",
+  "components": {
+    "nxbootstrap": {
+      "version": "0.6.8",
+      "role": "generated runtime launcher"
+    },
+    "nxloader": {
+      "version": "0.7.1",
+      "role": "linked runtime",
+      "vendored": "vendor/nxloader"
+    },
+    "nxcompat": {
+      "version": "0.2.1",
+      "role": "linked runtime",
+      "vendored": "vendor/nxcompat"
+    },
+    "nxgl": {
+      "version": "0.2.5",
+      "role": "linked runtime",
+      "vendored": "vendor/nxgl"
+    },
+    "nxaudio": {
+      "version": "0.2.0",
+      "role": "linked runtime",
+      "vendored": "vendor/nxaudio"
+    },
+    "nxinput": {
+      "version": "0.3.1",
+      "role": "linked runtime",
+      "vendored": "vendor/nxinput"
+    },
+    "nxabi": {
+      "version": "0.1.0",
+      "role": "host build gate (not distributed; set NXABI to run it)"
+    },
+    "nxrelease": {
+      "version": "0.2.6",
+      "role": "host package gate (not distributed; set NXRELEASE to run it)"
+    },
+    "nxextract": {
+      "version": "1.2.6",
+      "role": "owner-data installer",
+      "files": {
+        "nxextract.py": "a4a8e5d3bf2a1344491e27921c54430ee9b4e3fedd0160631da96734fa3d5170",
+        "run-extractor.sh": "179b72f02b9dfdf3ed1bdc382d074fb4ef07f83e3d62cfccfc74a950e68679c2",
+        "nxextract-runtime-env.sh": "332919a9960d4317563b647f9932d1a4367da147a425fe2f78eafd706f01563f",
+        "extractor.json": "3ea804362d3a0a75fafec81c85fa01201dee533989bd66a183a99e021bfe9858"
+      }
+    }
+  },
+  "not_integrated": {
+    "nxandroid": "the version-pinned Rovio NativeApplication/JNI lifecycle remains adapter-owned",
+    "nxobs": "host-only diagnostics are not linked or shipped; raw support bundles are excluded"
+  },
+  "binary": {
+    "path": "angrybirds-nextos",
+    "sha256": "3255b19c9301ab2c4b2a1586825ba329f7093844a39f9d2ddd13edfc2634c15e",
+    "architecture": "armv7-hard-float",
+    "interpreter": "/lib/ld-linux-armhf.so.3",
+    "max_glibc": "2.17"
+  }
+}

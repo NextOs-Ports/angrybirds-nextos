@@ -1,0 +1,33 @@
+{
+  "architecture": "armv7",
+  "argument_mode": "game-dir-and-passthrough",
+  "enabled_quirks": [],
+  "executable": "angrybirds-nextos",
+  "home_mode": "preserve",
+  "id": "angrybirds",
+  "launcher_name": "Angry Birds Classic.sh",
+  "nxextract": {
+    "mode": "yes",
+    "version": "1.2.6"
+  },
+  "prepare_script": "",
+  "private_library_paths": [],
+  "required_capabilities": [
+    "host.portmaster",
+    "host.armhf-libs",
+    "graphics.window",
+    "graphics.gles2",
+    "graphics.egl",
+    "graphics.egl-config",
+    "graphics.drawable",
+    "audio.output-open",
+    "input.controller-mapping"
+  ],
+  "required_files": [
+    "angrybirds-nextos",
+    "game.apk"
+  ],
+  "runtime_report": "log-and-logo",
+  "schema_version": 2,
+  "title": "Angry Birds Classic"
+}
