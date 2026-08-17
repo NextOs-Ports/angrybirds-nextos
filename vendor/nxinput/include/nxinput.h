@@ -177,6 +177,11 @@ void nxinput_set_focus(nxinput_context *input, int focused);
 unsigned int nxinput_connected_count(const nxinput_context *input);
 int nxinput_first_connected(const nxinput_context *input);
 int nxinput_find_instance(const nxinput_context *input, int32_t instance_id);
+/* 0.3.2: the SDL_GameController behind a slot (NULL when disconnected), so an
+ * adapter can read binds -- e.g. to derive the physical SELECT/START evdev
+ * codes for nxinput_evdev_chord.h. Never close or remap it. */
+SDL_GameController *nxinput_pad_sdl_controller(const nxinput_context *input,
+                                               unsigned int slot);
 int nxinput_get_pad(const nxinput_context *input, unsigned int slot,
                     nxinput_pad_state *state);
 

@@ -36,6 +36,7 @@
 #include <unistd.h>
 
 #include "ab_port.h"
+#include "ab_locale.h"
 #include "nxloader_softfp.h"
 
 #define SF __attribute__((pcs("aapcs")))
@@ -323,7 +324,10 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  /* INGLÊS forçado (regra da casa: jamais japonês) */
+  /* Idioma do jogo: NXPORT_LANGUAGE (GAME_LANGUAGE do launcher); "auto" lê o
+   * LANG do sistema ANTES do processo fixar o seu proprio locale C. Japones
+   * nunca por padrao (regra da casa). */
+  ab_locale_init();
   setenv("LANG", "en_US.UTF-8", 1);
   setenv("LC_ALL", "en_US.UTF-8", 1);
 

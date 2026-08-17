@@ -24,4 +24,5 @@ fi
 exec "$PYTHON_BIN" "$SCRIPT_DIR/nxextract.py" install \
   --recipe "$RECIPE" \
   --game-dir "$GAME_DIR" \
+  --require-ui \
   "$@"

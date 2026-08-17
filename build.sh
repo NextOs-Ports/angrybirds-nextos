@@ -75,6 +75,7 @@ SOURCES=(
   "$PORT_DIR/src/ab_stdio.c"
   "$PORT_DIR/src/ab_gl.c"
   "$PORT_DIR/src/ab_jni.c"
+  "$PORT_DIR/src/ab_locale.c"
   "$PORT_DIR/src/ab_audio.c"
   "$PORT_DIR/src/ab_evdev_exit.c"
   "$PORT_DIR/src/ab_input.c"

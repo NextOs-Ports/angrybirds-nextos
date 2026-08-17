@@ -817,6 +817,13 @@ int nxinput_first_connected(const nxinput_context *input) {
   return -1;
 }
 
+SDL_GameController *nxinput_pad_sdl_controller(const nxinput_context *input,
+                                               unsigned int slot) {
+  if (!input || slot >= NXINPUT_MAX_PADS)
+    return NULL;
+  return input->slots[slot].controller;
+}
+
 int nxinput_find_instance(const nxinput_context *input, int32_t instance_id) {
   if (!input)
     return -1;

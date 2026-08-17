@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "ab_port.h"
+#include "ab_locale.h"
 
 #define SF __attribute__((pcs("aapcs")))
 
@@ -317,35 +318,39 @@ static AbResult dispatch(const AbMember *member, va_list ap) {
     return r;
   }
 
-  /* ---------- localização: INGLÊS forçado (regra da casa) ---------- */
+  /* ---------- localização: NXPORT_LANGUAGE do launcher (auto = LANG do
+   * sistema, fallback en; japonês nunca por padrão) ---------- */
   if (is(member, "com/rovio/rcs/Localization::deviceLocale")) {
-    r.object = new_string("en-US");
+    r.object = new_string(ab_locale_tag());      /* pt-BR */
     return r;
   }
-  if (is(member, "com/rovio/rcs/Localization::systemLocale")) {
-    r.object = new_string("en");
+  if (is(member, "com/rovio/rcs/Localization::systemLocale") ||
+      is(member, "java/util/Locale::getLanguage")) {
+    r.object = new_string(ab_locale_language()); /* pt */
     return r;
   }
   if (is(member, "java/util/Locale::getDefault")) {
     r.object = new_object("java/util/Locale");
     return r;
   }
-  if (is(member, "java/util/Locale::getLanguage") ||
-      is(member, "java/util/Locale::toString") ||
-      is(member, "java/util/Locale::toLanguageTag")) {
-    r.object = new_string("en");
+  if (is(member, "java/util/Locale::toString")) {
+    r.object = new_string(ab_locale_underscore()); /* pt_BR */
+    return r;
+  }
+  if (is(member, "java/util/Locale::toLanguageTag")) {
+    r.object = new_string(ab_locale_tag());
     return r;
   }
   if (is(member, "java/util/Locale::getISO3Language")) {
-    r.object = new_string("eng");
+    r.object = new_string(ab_locale_iso3_language());
     return r;
   }
   if (is(member, "java/util/Locale::getCountry")) {
-    r.object = new_string("US");
+    r.object = new_string(ab_locale_country());
     return r;
   }
   if (is(member, "java/util/Locale::getISO3Country")) {
-    r.object = new_string("USA");
+    r.object = new_string(ab_locale_iso3_country());
     return r;
   }
 
