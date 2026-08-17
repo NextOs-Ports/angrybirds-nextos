@@ -1,112 +1,76 @@
 {
-  "schema_version": 2,
-  "source_root": ".",
-  "package": {
-    "id": "angrybirds",
-    "version": "1.1.3-test.1",
-    "profile": "universal-portmaster",
-    "launcher": "Angry Birds Classic.sh",
-    "launcher_chain": [
-      "Angry Birds Classic.sh"
-    ],
-    "launcher_contract": {
-      "generator": "nxbootstrap",
-      "version": "0.6.8",
-      "config_path": "angrybirds/nxport.json",
-      "config_sha256": "9b98734123cf297be0b21b88399ccdd2abdf710abdaf9ea9264fb488104d0abb"
-    },
-    "port_dir": "angrybirds",
-    "license": {
-      "spdx_id": "GPL-3.0-only",
-      "source_url": "https://github.com/NextOs-Ports/angrybirds-nextos",
-      "file": "angrybirds/LICENSE"
-    }
-  },
-  "release": {
-    "source_date_epoch": 1786665600,
-    "max_glibc": "2.17",
-    "compression": "deflated"
-  },
-  "nxextract": {
-    "path": "angrybirds/nxextract/nxextract.py",
-    "version": "1.2.6",
-    "minimum_version": "1.2.6",
-    "sha256": "a4a8e5d3bf2a1344491e27921c54430ee9b4e3fedd0160631da96734fa3d5170",
-    "runner_path": "angrybirds/nxextract/run-extractor.sh",
-    "runner_sha256": "179b72f02b9dfdf3ed1bdc382d074fb4ef07f83e3d62cfccfc74a950e68679c2",
-    "runtime_env_path": "angrybirds/nxextract/nxextract-runtime-env.sh",
-    "runtime_env_sha256": "332919a9960d4317563b647f9932d1a4367da147a425fe2f78eafd706f01563f",
-    "recipe_path": "angrybirds/extractor.json",
-    "recipe_sha256": "3ea804362d3a0a75fafec81c85fa01201dee533989bd66a183a99e021bfe9858"
-  },
-  "portmaster_metadata": {
-    "port_json": {
-      "path": "angrybirds/port.json",
-      "sha256": "426806a2b9c3db6bf9e96d49685c9e156e0403666331b34c86dfc2b65e435461"
-    },
-    "images": []
-  },
   "dependencies": [
     {
-      "namespace": "linux",
       "architecture": "armv7",
-      "soname": "libSDL2-2.0.so.0",
-      "provider": "portmaster"
+      "namespace": "linux",
+      "provider": "portmaster",
+      "soname": "libSDL2-2.0.so.0"
     },
     {
-      "namespace": "linux",
       "architecture": "armv7",
-      "soname": "libc.so.6",
-      "provider": "glibc-base"
+      "namespace": "linux",
+      "provider": "glibc-base",
+      "soname": "libc.so.6"
     },
     {
-      "namespace": "linux",
       "architecture": "armv7",
-      "soname": "libdl.so.2",
-      "provider": "glibc-base"
+      "namespace": "linux",
+      "provider": "glibc-base",
+      "soname": "libdl.so.2"
     },
     {
-      "namespace": "linux",
       "architecture": "armv7",
-      "soname": "libgcc_s.so.1",
-      "provider": "firmware"
+      "namespace": "linux",
+      "provider": "firmware",
+      "soname": "libgcc_s.so.1"
     },
     {
-      "namespace": "linux",
       "architecture": "armv7",
-      "soname": "libm.so.6",
-      "provider": "glibc-base"
+      "namespace": "linux",
+      "provider": "glibc-base",
+      "soname": "libm.so.6"
     },
     {
-      "namespace": "linux",
       "architecture": "armv7",
-      "soname": "libpthread.so.0",
-      "provider": "glibc-base"
+      "namespace": "linux",
+      "provider": "glibc-base",
+      "soname": "libpthread.so.0"
     },
     {
-      "namespace": "linux",
       "architecture": "armv7",
-      "soname": "libz.so.1",
-      "provider": "firmware"
+      "namespace": "linux",
+      "provider": "firmware",
+      "soname": "libz.so.1"
     }
   ],
+  "exceptions": [],
   "files": [
     {
-      "source": "Angry Birds Classic.sh",
-      "target": "Angry Birds Classic.sh",
       "kind": "launcher",
       "mode": "0755",
-      "sha256": "f0b33d25ce4435b6ca18594d7fd5e04f5eae32026f9e176fb4a6c858993db809"
+      "sha256": "d1e950f047426d6909a02a3c72e06e4ca8fbf9c9b36f621673d3a8a2b85f23bb",
+      "source": "Angry Birds Classic.sh",
+      "target": "Angry Birds Classic.sh"
     },
     {
-      "source": "angrybirds-nextos",
-      "target": "angrybirds/angrybirds-nextos",
-      "kind": "project-linux",
-      "mode": "0755",
+      "kind": "nxbootstrap-config",
+      "mode": "0644",
+      "sha256": "49ef61ee43b56d8f7528e5ce48d7bdbb47b4ae539fb95de1fad931babeb09984",
+      "source": "nxport.json",
+      "target": "angrybirds/nxport.json"
+    },
+    {
+      "kind": "payload",
+      "mode": "0644",
+      "sha256": "f82029de692916c022deac597a8c540ae2d6380123f2d206936d49fc2c598628",
+      "source": "nxproject.json",
+      "target": "angrybirds/nxproject.json"
+    },
+    {
       "architecture": "armv7",
       "build_profile": "universal-low-glibc",
-      "provenance": "build.sh with pinned /opt/prebuilt ARMHF GCC and Debian Buster glibc 2.28 sysroot; read-only NextOS headers; deterministic SOURCE_DATE_EPOCH",
-      "sha256": "3255b19c9301ab2c4b2a1586825ba329f7093844a39f9d2ddd13edfc2634c15e",
+      "kind": "project-linux",
+      "mode": "0755",
       "needed": [
         "libSDL2-2.0.so.0",
         "libc.so.6",
@@ -116,113 +80,192 @@
         "libpthread.so.0",
         "libz.so.1"
       ],
-      "soname": null
+      "provenance": "port build script; framework pinned by FRAMEWORK-PIN.json",
+      "sha256": "d734e7ae8ccdf3dfea9012e2790cb3fba2a69c2965d1f8f0cc1892ba640d0049",
+      "soname": null,
+      "source": "angrybirds-nextos",
+      "target": "angrybirds/angrybirds-nextos"
     },
     {
-      "source": "nxport.json",
-      "target": "angrybirds/nxport.json",
-      "kind": "nxbootstrap-config",
+      "kind": "payload",
       "mode": "0644",
-      "sha256": "9b98734123cf297be0b21b88399ccdd2abdf710abdaf9ea9264fb488104d0abb"
+      "sha256": "58945c23d9a5ab4c42854e34072b7a82b1135c68ea6e783d65e0b5fa05f8e24b",
+      "source": "README.md",
+      "target": "angrybirds/README.md"
     },
     {
-      "source": "extractor.json",
-      "target": "angrybirds/extractor.json",
-      "kind": "nxextract-recipe",
+      "kind": "payload",
       "mode": "0644",
-      "sha256": "3ea804362d3a0a75fafec81c85fa01201dee533989bd66a183a99e021bfe9858"
+      "sha256": "2452e989ee355348f3cf6bf324f170fd6d94885bd07217ed57a83d85a8961a50",
+      "source": "INSTALLATION.md",
+      "target": "angrybirds/INSTALLATION.md"
     },
     {
-      "source": "nxextract/nxextract.py",
-      "target": "angrybirds/nxextract/nxextract.py",
-      "kind": "nxextract",
+      "kind": "license-notice",
       "mode": "0644",
-      "sha256": "a4a8e5d3bf2a1344491e27921c54430ee9b4e3fedd0160631da96734fa3d5170"
+      "sha256": "c7c096bdd57656f215d52488d113006e308d60fbe3345e362a4ae948e30fe526",
+      "source": "LICENSE",
+      "target": "angrybirds/LICENSE"
     },
     {
-      "source": "nxextract/run-extractor.sh",
-      "target": "angrybirds/nxextract/run-extractor.sh",
-      "kind": "nxextract-runner",
-      "mode": "0644",
-      "sha256": "179b72f02b9dfdf3ed1bdc382d074fb4ef07f83e3d62cfccfc74a950e68679c2"
-    },
-    {
-      "source": "nxextract/nxextract-runtime-env.sh",
-      "target": "angrybirds/nxextract/nxextract-runtime-env.sh",
-      "kind": "nxextract-runtime-env",
-      "mode": "0644",
-      "sha256": "332919a9960d4317563b647f9932d1a4367da147a425fe2f78eafd706f01563f"
-    },
-    {
-      "source": "port.json",
-      "target": "angrybirds/port.json",
       "kind": "portmaster-metadata",
       "mode": "0644",
-      "sha256": "426806a2b9c3db6bf9e96d49685c9e156e0403666331b34c86dfc2b65e435461"
+      "sha256": "e3db8104f35f60e6d24356710b44f3b879a650fec18929d6720a3aa3222fc286",
+      "source": "port.json",
+      "target": "angrybirds/port.json"
     },
     {
-      "source": "README.md",
-      "target": "angrybirds/README.md",
-      "kind": "payload",
+      "kind": "portmaster-metadata",
       "mode": "0644",
-      "sha256": "58945c23d9a5ab4c42854e34072b7a82b1135c68ea6e783d65e0b5fa05f8e24b"
+      "sha256": "22f4f09ac528a514a989e9a9c6628cecf4d5ea6553b03fdd7b01fcfb71b46b79",
+      "source": "gameinfo.xml",
+      "target": "angrybirds/gameinfo.xml"
     },
     {
-      "source": "INSTALLATION.md",
-      "target": "angrybirds/INSTALLATION.md",
-      "kind": "payload",
+      "architecture": "armv7",
+      "build_profile": "universal-low-glibc",
+      "kind": "nxsplash-linux",
+      "mode": "0755",
+      "needed": [
+        "libc.so.6",
+        "libdl.so.2"
+      ],
+      "provenance": "NXSplash 0.1.2 canonical armv7 artifact",
+      "sha256": "88a2b39be45826348375f966af536e976b37eefd18a88c8fcff75f6fd08015d8",
+      "soname": null,
+      "source": "nxsplash-nextos",
+      "target": "angrybirds/nxsplash-nextos"
+    },
+    {
+      "kind": "license-notice",
       "mode": "0644",
-      "sha256": "2452e989ee355348f3cf6bf324f170fd6d94885bd07217ed57a83d85a8961a50"
-    },
-    {
+      "sha256": "49814031e2af5eec81889ab75479b0f6a0ac70b676d76612c37c7ec7fb4b556c",
       "source": "NOTICE.md",
-      "target": "angrybirds/NOTICE.md",
-      "kind": "license-notice",
-      "mode": "0644",
-      "sha256": "49814031e2af5eec81889ab75479b0f6a0ac70b676d76612c37c7ec7fb4b556c"
+      "target": "angrybirds/NOTICE.md"
     },
     {
-      "source": "LICENSE",
-      "target": "angrybirds/LICENSE",
-      "kind": "license-notice",
+      "kind": "payload",
       "mode": "0644",
-      "sha256": "c7c096bdd57656f215d52488d113006e308d60fbe3345e362a4ae948e30fe526"
-    },
-    {
-      "source": "licenses/NXExtract-MIT.txt",
-      "target": "angrybirds/licenses/NXExtract-MIT.txt",
-      "kind": "license-notice",
-      "mode": "0644",
-      "sha256": "74d7d9d40e27fbfe23cb462f9608fa07cbe53ffb0b88a0da9e85dda240c2c788"
-    },
-    {
+      "sha256": "a880db52ba985248ee386eef1c3d3f386d8d7b2cf9a7f855c3a2e2a748ffbfc3",
       "source": "version.txt",
-      "target": "angrybirds/version.txt",
-      "kind": "payload",
-      "mode": "0644",
-      "sha256": "8b54e1035c604c39d4f56290f0ae850b74e8347039301a549b0e1dc0cad05ee9"
+      "target": "angrybirds/version.txt"
     },
     {
-      "source": "gamedata-template/README.txt",
-      "target": "angrybirds/gamedata/README.txt",
       "kind": "payload",
       "mode": "0644",
-      "sha256": "1081aac25108a6c500a06625f0abf3174652e0a227bfeb2b939d867595e57c6a"
-    },
-    {
+      "sha256": "2ddb53e4e09e5d36785ced230283ec0662aa3b49db722622063301ce0539b509",
       "source": "FRAMEWORK-PIN.json",
-      "target": "angrybirds/FRAMEWORK-PIN.json",
-      "kind": "payload",
-      "mode": "0644",
-      "sha256": "2ddb53e4e09e5d36785ced230283ec0662aa3b49db722622063301ce0539b509"
+      "target": "angrybirds/FRAMEWORK-PIN.json"
     },
     {
-      "source": "adapter/adapter-contract.json",
-      "target": "angrybirds/adapter/adapter-contract.json",
+      "kind": "license-notice",
+      "mode": "0644",
+      "sha256": "74d7d9d40e27fbfe23cb462f9608fa07cbe53ffb0b88a0da9e85dda240c2c788",
+      "source": "licenses/NXExtract-MIT.txt",
+      "target": "angrybirds/licenses/NXExtract-MIT.txt"
+    },
+    {
+      "kind": "nxextract-recipe",
+      "mode": "0644",
+      "sha256": "b8e34425bcb0e267a08bb22b8dfa8318541515e230954f4eb5612b8c2c2abe4d",
+      "source": "extractor.json",
+      "target": "angrybirds/extractor.json"
+    },
+    {
+      "kind": "nxextract",
+      "mode": "0644",
+      "sha256": "b1b46ecdf1336b1412d7d3a3d291220aca4834a47730a5545afb382dae6036b5",
+      "source": "nxextract/nxextract.py",
+      "target": "angrybirds/nxextract/nxextract.py"
+    },
+    {
+      "kind": "nxextract-runner",
+      "mode": "0644",
+      "sha256": "c931427c7226d22d7e30eee8549b50f0621dca1c9d0336634aca08631f454d7a",
+      "source": "nxextract/run-extractor.sh",
+      "target": "angrybirds/nxextract/run-extractor.sh"
+    },
+    {
+      "kind": "nxextract-runtime-env",
+      "mode": "0644",
+      "sha256": "332919a9960d4317563b647f9932d1a4367da147a425fe2f78eafd706f01563f",
+      "source": "nxextract/nxextract-runtime-env.sh",
+      "target": "angrybirds/nxextract/nxextract-runtime-env.sh"
+    },
+    {
+      "architecture": "armv7",
+      "build_profile": "universal-low-glibc",
+      "kind": "nxextract-ui-linux",
+      "mode": "0755",
+      "needed": [
+        "libc.so.6",
+        "libdl.so.2"
+      ],
+      "provenance": "NXExtract UI 1.2.10 canonical armv7 artifact",
+      "sha256": "02ce707129b80ca1666f72c9e74792525dd2c7d2ada93bac5a93b9bfb41e3ff6",
+      "soname": null,
+      "source": "nxextract/nxextract-ui",
+      "target": "angrybirds/nxextract/nxextract-ui"
+    },
+    {
       "kind": "payload",
       "mode": "0644",
-      "sha256": "adbe2c6e1cda899c843570313856e9fb7da7d9c274854ea1eeddc5654315549d"
+      "sha256": "4304275f30e076c76abdc0f280f0fdd5537f1ac700953ba1908e29a64d531919",
+      "source": "nxextract-version.txt",
+      "target": "angrybirds/nxextract-version.txt"
     }
   ],
-  "exceptions": []
+  "nxextract": {
+    "minimum_version": "1.2.10",
+    "path": "angrybirds/nxextract/nxextract.py",
+    "recipe_path": "angrybirds/extractor.json",
+    "recipe_sha256": "b8e34425bcb0e267a08bb22b8dfa8318541515e230954f4eb5612b8c2c2abe4d",
+    "runner_path": "angrybirds/nxextract/run-extractor.sh",
+    "runner_sha256": "c931427c7226d22d7e30eee8549b50f0621dca1c9d0336634aca08631f454d7a",
+    "runtime_env_path": "angrybirds/nxextract/nxextract-runtime-env.sh",
+    "runtime_env_sha256": "332919a9960d4317563b647f9932d1a4367da147a425fe2f78eafd706f01563f",
+    "sha256": "b1b46ecdf1336b1412d7d3a3d291220aca4834a47730a5545afb382dae6036b5",
+    "ui_path": "angrybirds/nxextract/nxextract-ui",
+    "ui_sha256": "02ce707129b80ca1666f72c9e74792525dd2c7d2ada93bac5a93b9bfb41e3ff6",
+    "version": "1.2.10"
+  },
+  "package": {
+    "id": "angrybirds",
+    "launcher": "Angry Birds Classic.sh",
+    "launcher_chain": [
+      "Angry Birds Classic.sh"
+    ],
+    "launcher_contract": {
+      "config_path": "angrybirds/nxport.json",
+      "config_sha256": "49ef61ee43b56d8f7528e5ce48d7bdbb47b4ae539fb95de1fad931babeb09984",
+      "generator": "nxbootstrap",
+      "version": "0.6.17"
+    },
+    "license": {
+      "file": "angrybirds/LICENSE",
+      "source_url": "https://github.com/NextOs-Ports/angrybirds-nextos",
+      "spdx_id": "GPL-3.0-only"
+    },
+    "port_dir": "angrybirds",
+    "profile": "universal-portmaster",
+    "version": "1.1.3-test.1"
+  },
+  "portmaster_metadata": {
+    "gameinfo_xml": {
+      "path": "angrybirds/gameinfo.xml",
+      "sha256": "22f4f09ac528a514a989e9a9c6628cecf4d5ea6553b03fdd7b01fcfb71b46b79"
+    },
+    "images": [],
+    "port_json": {
+      "path": "angrybirds/port.json",
+      "sha256": "e3db8104f35f60e6d24356710b44f3b879a650fec18929d6720a3aa3222fc286"
+    }
+  },
+  "release": {
+    "compression": "deflated",
+    "max_glibc": "2.30",
+    "source_date_epoch": 1786492800
+  },
+  "schema_version": 2,
+  "source_root": "."
 }

@@ -4,6 +4,7 @@
       "armhf"
     ],
     "min_glibc": "2.17",
+    "runtime": [],
     "title": "Angry Birds Classic"
   },
   "items": [

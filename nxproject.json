@@ -10,7 +10,7 @@
     "source": "LICENSE",
     "spdx_id": "GPL-3.0-only"
   },
-  "nxextract_recipe": "ports/angrybirds/extractor.json",
+  "nxextract_recipe": "extractor.json",
   "nxport": {
     "architecture": "armv7",
     "argument_mode": "game-dir-and-passthrough",
@@ -21,7 +21,7 @@
     "launcher_name": "Angry Birds Classic.sh",
     "nxextract": {
       "mode": "yes",
-      "version": "1.2.6"
+      "version": "1.2.10"
     },
     "prepare_script": "",
     "private_library_paths": [],
@@ -38,6 +38,7 @@
     ],
     "required_files": [
       "angrybirds-nextos",
+      "nxsplash-nextos",
       "game.apk"
     ],
     "runtime_report": "log-and-logo",
