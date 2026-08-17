@@ -48,21 +48,21 @@
     {
       "kind": "launcher",
       "mode": "0755",
-      "sha256": "d1e950f047426d6909a02a3c72e06e4ca8fbf9c9b36f621673d3a8a2b85f23bb",
+      "sha256": "3b2c8f87e13ee36332626ff530f933bb8a986c4dddf9bf2aa52a3facf8a49496",
       "source": "Angry Birds Classic.sh",
       "target": "Angry Birds Classic.sh"
     },
     {
       "kind": "nxbootstrap-config",
       "mode": "0644",
-      "sha256": "49ef61ee43b56d8f7528e5ce48d7bdbb47b4ae539fb95de1fad931babeb09984",
+      "sha256": "51538578ab8efe06908bd46e4ac55db6a6e87a10352e4d7cf9a5a96ba1e65c6e",
       "source": "nxport.json",
       "target": "angrybirds/nxport.json"
     },
     {
       "kind": "payload",
       "mode": "0644",
-      "sha256": "f82029de692916c022deac597a8c540ae2d6380123f2d206936d49fc2c598628",
+      "sha256": "0e6ea0bca8d7fb72a0fc464fd7e21a240ac7f034fe07b4d894a25be32501d54b",
       "source": "nxproject.json",
       "target": "angrybirds/nxproject.json"
     },
@@ -158,6 +158,20 @@
       "target": "angrybirds/FRAMEWORK-PIN.json"
     },
     {
+      "kind": "payload",
+      "mode": "0644",
+      "sha256": "adbe2c6e1cda899c843570313856e9fb7da7d9c274854ea1eeddc5654315549d",
+      "source": "adapter/adapter-contract.json",
+      "target": "angrybirds/adapter/adapter-contract.json"
+    },
+    {
+      "kind": "payload",
+      "mode": "0755",
+      "sha256": "e5723aa175251208302a4dc07354a21e3f8ce96a2de7e629d1a2d8a9a5dc97fe",
+      "source": "tools/build-lua-adapter.sh",
+      "target": "angrybirds/tools/build-lua-adapter.sh"
+    },
+    {
       "kind": "license-notice",
       "mode": "0644",
       "sha256": "74d7d9d40e27fbfe23cb462f9608fa07cbe53ffb0b88a0da9e85dda240c2c788",
@@ -237,7 +251,7 @@
     ],
     "launcher_contract": {
       "config_path": "angrybirds/nxport.json",
-      "config_sha256": "49ef61ee43b56d8f7528e5ce48d7bdbb47b4ae539fb95de1fad931babeb09984",
+      "config_sha256": "51538578ab8efe06908bd46e4ac55db6a6e87a10352e4d7cf9a5a96ba1e65c6e",
       "generator": "nxbootstrap",
       "version": "0.6.17"
     },

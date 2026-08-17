@@ -63,6 +63,21 @@ NXBOOTSTRAP_LAUNCHER_DIR=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")"
 PORT_32BIT="Y"
 export PORT_32BIT
 XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+# Language / Idioma (supported / suportados: en, pt-br, pt, es, fr, de, it, ru, pl, ar, zh-cn, zh-tw).
+# Edit only this value; adapters opt in through nxport.json.
+GAME_LANGUAGE="auto"
+case "$GAME_LANGUAGE" in
+  auto|en|pt-br|pt|es|fr|de|it|ru|pl|ar|zh-cn|zh-tw) ;;
+  *) GAME_LANGUAGE="auto" ;;
+esac
+NXPORT_LANGUAGE=${NXPORT_LANGUAGE:-$GAME_LANGUAGE}
+case "$NXPORT_LANGUAGE" in
+  auto|en|pt-br|pt|es|fr|de|it|ru|pl|ar|zh-cn|zh-tw) ;;
+  *) NXPORT_LANGUAGE=$GAME_LANGUAGE ;;
+esac
+NXBOOTSTRAP_LANGUAGE=$NXPORT_LANGUAGE
+export NXPORT_LANGUAGE
+
 
 # PortMaster publishes the integrated handheld stick count as ANALOGSTICKS;
 # some CFW adapters use ANALOG_STICKS. Keep it as a validated host hint only:
@@ -779,6 +794,10 @@ nxbootstrap_install_exit_trap
 nxbootstrap_install_early_traps
 
 # Manifest-owned runtime contract: reassert after every mutable shell hook.
+# Reassert after the mutable adapter hook; adapters consume, never redefine it.
+NXPORT_LANGUAGE=$NXBOOTSTRAP_LANGUAGE
+export NXPORT_LANGUAGE
+
 case "$NXBOOTSTRAP_ANALOG_STICKS_HINT" in
   0|1|2) export NXINPUT_ANALOG_STICKS_HINT="$NXBOOTSTRAP_ANALOG_STICKS_HINT" ;;
   *) unset NXINPUT_ANALOG_STICKS_HINT ;;
