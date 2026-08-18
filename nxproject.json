@@ -21,7 +21,7 @@
     "launcher_name": "Angry Birds Classic.sh",
     "nxextract": {
       "mode": "yes",
-      "version": "1.2.10"
+      "version": "1.2.11"
     },
     "prepare_script": "",
     "private_library_paths": [],

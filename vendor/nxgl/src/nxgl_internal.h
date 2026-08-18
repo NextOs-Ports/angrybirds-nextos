@@ -103,6 +103,19 @@ void nxgl_pump_events_without_consuming(void);
 int nxgl_arbiter_try_acquire(void);
 void nxgl_arbiter_release(void);
 
+#if defined(NXGL_PROVIDER_RECOVERY_TESTING)
+typedef int (*nxgl_provider_recovery_exec_test_hook)(
+    const char *path, char *const argv[]);
+typedef int (*nxgl_provider_recovery_setenv_test_hook)(
+    const char *name, const char *value, int overwrite);
+typedef int (*nxgl_provider_recovery_unsetenv_test_hook)(const char *name);
+void nxgl_test_provider_recovery_set_exec_hook(
+    nxgl_provider_recovery_exec_test_hook hook);
+void nxgl_test_provider_recovery_set_environment_hooks(
+    nxgl_provider_recovery_setenv_test_hook setenv_hook,
+    nxgl_provider_recovery_unsetenv_test_hook unsetenv_hook);
+#endif
+
 #if defined(NXGL_CORE_TESTING)
 /* Test-only seam compiled into a private target.  It exercises the exact
  * production snapshot/clear/callback/restore transaction without SDL video. */

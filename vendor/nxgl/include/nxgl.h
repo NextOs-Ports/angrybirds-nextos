@@ -15,7 +15,7 @@ extern "C" {
 #define NXGL_API_VERSION_V1 1u
 #define NXGL_API_VERSION_V2 2u
 #define NXGL_API_CURRENT_VERSION NXGL_API_VERSION_V2
-#define NXGL_VERSION "0.2.5"
+#define NXGL_VERSION "0.2.8"
 
 #define NXGL_NAME_MAX 64u
 #define NXGL_DETAIL_MAX 192u
@@ -676,6 +676,97 @@ typedef struct nxgl_silhouette_observation_v2 {
 int nxgl_classify_black_silhouette_v2(
     const nxgl_silhouette_observation_v2 *observation,
     nxgl_silhouette_diagnosis_v2 *diagnosis);
+
+/* Frame proof: did anything the engine drew actually reach the presented
+ * frame?  A run that draws nothing looks healthy in every other signal a
+ * launcher has -- the loop ticks, audio plays, input arrives and the process
+ * exits 0 -- so "black screen" is only reportable if someone measures the
+ * frame.  The caller reads pixels back (it owns the GL context; nxgl never
+ * touches GL state) and reports the share of non-black pixels of the best
+ * sample it saw.  Sampling more than one frame is required: a title card can
+ * legitimately be black at the first sample, and a single reading turns that
+ * into a false verdict.
+ *
+ * UNKNOWN is not a pass. It means the run ended before any sample existed and
+ * nothing about the image was proven either way. */
+#define NXGL_FRAME_PROOF_DEFAULT_MIN_NON_BLACK 0.5 /* percent of pixels */
+
+typedef enum nxgl_frame_proof_verdict_v2 {
+  NXGL_FRAME_PROOF_V2_UNKNOWN = 0,
+  NXGL_FRAME_PROOF_V2_BLACK,
+  NXGL_FRAME_PROOF_V2_OK
+} nxgl_frame_proof_verdict_v2;
+
+typedef struct nxgl_frame_proof_observation_v2 {
+  uint32_t api_version;
+  size_t struct_size;
+  int samples;                      /* frames actually read back */
+  double best_non_black_percent;    /* best sample, 0..100 */
+  double minimum_non_black_percent; /* 0 selects the default above */
+} nxgl_frame_proof_observation_v2;
+
+int nxgl_classify_frame_proof_v2(
+    const nxgl_frame_proof_observation_v2 *observation,
+    nxgl_frame_proof_verdict_v2 *verdict);
+
+/* Launch context: was this run even able to produce an image?
+ *
+ * A port launched from a remote shell can fail to open a window for reasons
+ * that have nothing to do with the port -- on RK3326/ArkOS the SDL window
+ * never opens over SSH, the provider repair takes its pre-context branch and
+ * every probe fails, while the exact same build launched from the device
+ * frontend repairs itself and renders. A black frame collected that way is
+ * evidence about the harness, not about the game, and reporting it as a defect
+ * sends everyone hunting a regression that does not exist.
+ *
+ * So the verdict is asymmetric: a drawn frame proves the port draws no matter
+ * how it was launched, but an empty frame only accuses the port when the
+ * launch could have produced an image in the first place. */
+typedef enum nxgl_launch_context_v2 {
+  NXGL_LAUNCH_CONTEXT_V2_UNKNOWN = 0,
+  NXGL_LAUNCH_CONTEXT_V2_FRONTEND, /* started by the device frontend */
+  NXGL_LAUNCH_CONTEXT_V2_CONSOLE,  /* local VT with the display attached */
+  NXGL_LAUNCH_CONTEXT_V2_REMOTE    /* remote shell: cannot prove an image */
+} nxgl_launch_context_v2;
+
+typedef struct nxgl_launch_observation_v2 {
+  uint32_t api_version;
+  size_t struct_size;
+  int frontend_launched; /* launcher was invoked by the frontend */
+  int remote_session;    /* SSH_CONNECTION or SSH_TTY present */
+  int seat_vt;           /* stdin is a real VT, not a pseudo-terminal */
+} nxgl_launch_observation_v2;
+
+int nxgl_classify_launch_context_v2(
+    const nxgl_launch_observation_v2 *observation,
+    nxgl_launch_context_v2 *context);
+
+/* GLES1 client-array bridge: the ROCKNIX g24p0 Wayland blob on Mali-G52 loses
+ * the VBO association held by a GLES1 client-array descriptor and then reads
+ * the descriptor's byte offset as a CPU address. The observed result is a
+ * SIGSEGV in the first drawn frame with fault=0x3e inside libmali, so the game
+ * dies at frame 1 with status 139 after a completely healthy boot.
+ *
+ * The workaround -- mirroring buffer objects in CPU memory and handing that one
+ * driver ordinary client arrays -- is expensive and must never reach a healthy
+ * stack, so the decision is gated on the full driver tuple rather than on the
+ * vendor alone: Mali-G31, Mali-G310 and Mali-450 all run this same engine
+ * correctly and must stay on the direct path. */
+typedef struct nxgl_client_array_observation_v2 {
+  uint32_t api_version;
+  size_t struct_size;
+  const char *video_driver; /* SDL video driver, e.g. "wayland", "KMSDRM" */
+  const char *renderer;     /* GL_RENDERER */
+  const char *version;      /* GL_VERSION */
+} nxgl_client_array_observation_v2;
+
+int nxgl_classify_client_array_bridge_v2(
+    const nxgl_client_array_observation_v2 *observation, int *bridge_required);
+
+/* Whether a BLACK frame proof from this context may be reported as a port
+ * defect. Conclusive contexts accuse the port; the rest demand a re-test. */
+int nxgl_frame_proof_is_conclusive_v2(nxgl_launch_context_v2 context,
+                                      int *conclusive);
 
 /* Pure, conservative prefilter for adapter-owned GL-provider recovery.
  * A filename that passes is only a candidate: callers must still validate the

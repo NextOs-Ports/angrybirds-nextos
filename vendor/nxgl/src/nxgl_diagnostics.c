@@ -247,6 +247,103 @@ int nxgl_surface_observe_v2(
   return NXGL_SUCCESS;
 }
 
+int nxgl_classify_frame_proof_v2(
+    const nxgl_frame_proof_observation_v2 *observation,
+    nxgl_frame_proof_verdict_v2 *verdict) {
+  if (!observation || !verdict ||
+      observation->api_version != NXGL_API_VERSION_V2 ||
+      observation->struct_size < sizeof(*observation) ||
+      observation->samples < 0 || observation->best_non_black_percent < 0.0 ||
+      observation->best_non_black_percent > 100.0 ||
+      observation->minimum_non_black_percent < 0.0 ||
+      observation->minimum_non_black_percent > 100.0)
+    return NXGL_ERROR_INVALID_ARGUMENT;
+
+  if (observation->samples == 0) {
+    /* No evidence either way. Never report this as a pass: the whole point of
+     * the verdict is that silence stops counting as success. */
+    *verdict = NXGL_FRAME_PROOF_V2_UNKNOWN;
+    return NXGL_SUCCESS;
+  }
+
+  double minimum = observation->minimum_non_black_percent > 0.0
+                       ? observation->minimum_non_black_percent
+                       : NXGL_FRAME_PROOF_DEFAULT_MIN_NON_BLACK;
+  *verdict = observation->best_non_black_percent < minimum
+                 ? NXGL_FRAME_PROOF_V2_BLACK
+                 : NXGL_FRAME_PROOF_V2_OK;
+  return NXGL_SUCCESS;
+}
+
+int nxgl_classify_client_array_bridge_v2(
+    const nxgl_client_array_observation_v2 *observation,
+    int *bridge_required) {
+  if (!observation || !bridge_required ||
+      observation->api_version != NXGL_API_VERSION_V2 ||
+      observation->struct_size < sizeof(*observation))
+    return NXGL_ERROR_INVALID_ARGUMENT;
+
+  const char *driver = observation->video_driver;
+  const char *renderer = observation->renderer;
+  const char *version = observation->version;
+
+  /* Every field is required: a partial tuple is not evidence, and guessing
+   * here means enabling a CPU-side mirror on a driver that never needed it. */
+  if (!driver || !renderer || !version) {
+    *bridge_required = 0;
+    return NXGL_SUCCESS;
+  }
+
+  *bridge_required = strcmp(driver, "wayland") == 0 &&
+                     strstr(renderer, "Mali-G52") != NULL &&
+                     strstr(version, "g24p0") != NULL;
+  return NXGL_SUCCESS;
+}
+
+int nxgl_classify_launch_context_v2(
+    const nxgl_launch_observation_v2 *observation,
+    nxgl_launch_context_v2 *context) {
+  if (!observation || !context ||
+      observation->api_version != NXGL_API_VERSION_V2 ||
+      observation->struct_size < sizeof(*observation) ||
+      !nxgl_diagnostic_boolean_valid(observation->frontend_launched) ||
+      !nxgl_diagnostic_boolean_valid(observation->remote_session) ||
+      !nxgl_diagnostic_boolean_valid(observation->seat_vt))
+    return NXGL_ERROR_INVALID_ARGUMENT;
+
+  /* The frontend owns the display and hands it over, so it wins even when the
+   * operator also happens to be logged in over the network. */
+  if (observation->frontend_launched)
+    *context = NXGL_LAUNCH_CONTEXT_V2_FRONTEND;
+  else if (observation->remote_session)
+    *context = NXGL_LAUNCH_CONTEXT_V2_REMOTE;
+  else if (observation->seat_vt)
+    *context = NXGL_LAUNCH_CONTEXT_V2_CONSOLE;
+  else
+    *context = NXGL_LAUNCH_CONTEXT_V2_UNKNOWN;
+  return NXGL_SUCCESS;
+}
+
+int nxgl_frame_proof_is_conclusive_v2(nxgl_launch_context_v2 context,
+                                      int *conclusive) {
+  if (!conclusive)
+    return NXGL_ERROR_INVALID_ARGUMENT;
+  switch (context) {
+  case NXGL_LAUNCH_CONTEXT_V2_FRONTEND:
+  case NXGL_LAUNCH_CONTEXT_V2_CONSOLE:
+    *conclusive = 1;
+    return NXGL_SUCCESS;
+  case NXGL_LAUNCH_CONTEXT_V2_REMOTE:
+  case NXGL_LAUNCH_CONTEXT_V2_UNKNOWN:
+    /* Fail open for the port, closed for the report: the run simply does not
+     * settle the question and must be repeated from the frontend. */
+    *conclusive = 0;
+    return NXGL_SUCCESS;
+  default:
+    return NXGL_ERROR_INVALID_ARGUMENT;
+  }
+}
+
 int nxgl_classify_black_silhouette_v2(
     const nxgl_silhouette_observation_v2 *observation,
     nxgl_silhouette_diagnosis_v2 *diagnosis) {

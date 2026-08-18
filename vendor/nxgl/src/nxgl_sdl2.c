@@ -84,11 +84,6 @@ static int nxgl_reset_hint_compat(const char *name) {
 #define NXGL_EGL_OPENGL_ES3_BIT_KHR 0x0040
 #define NXGL_EGL_WINDOW_BIT 0x0004
 
-/* All nxgl-owned SDL, environment and hint transitions are serialized by one
- * non-blocking process-global arbiter.  Cross-component ordering remains the
- * bootstrap/adapter's responsibility; nxgl never reaches into nxcompat's
- * private arbiter. */
-static volatile int nxgl_global_arbiter;
 #if defined(NXGL_M13_TESTING)
 static volatile int nxgl_test_fail_v2_allocation;
 
@@ -96,20 +91,6 @@ void nxgl_test_fail_next_v2_allocation(void) {
   nxgl_test_fail_v2_allocation = 1;
 }
 #endif
-
-int nxgl_arbiter_try_acquire(void) {
-#if defined(__GNUC__) || defined(__clang__)
-  return __sync_lock_test_and_set(&nxgl_global_arbiter, 1) == 0;
-#else
-#error "nxgl requires GCC/Clang atomic builtins for its global arbiter"
-#endif
-}
-
-void nxgl_arbiter_release(void) {
-#if defined(__GNUC__) || defined(__clang__)
-  __sync_lock_release(&nxgl_global_arbiter);
-#endif
-}
 
 #if !defined(NXGL_CORE_TESTING)
 static void *nxgl_v2_context_allocate(void) {

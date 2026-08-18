@@ -97,6 +97,7 @@ SOURCES=(
   "$VENDOR_DIR/nxcompat/src/nxcompat_registry.c"
   "$VENDOR_DIR/nxcompat/src/nxcompat_report.c"
   "$VENDOR_DIR/nxcompat/adapters/sdl2/nxcompat_sdl2.c"
+  "$VENDOR_DIR/nxgl/src/nxgl_arbiter.c"
   "$VENDOR_DIR/nxgl/src/nxgl_diagnostics.c"
   "$VENDOR_DIR/nxgl/src/nxgl_logic.c"
   "$VENDOR_DIR/nxgl/src/nxgl_metrics.c"
