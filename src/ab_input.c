@@ -128,10 +128,17 @@ static void ab_sens_init(const char *root) {
     snprintf(path, sizeof(path), "%s/sensitivity.txt", root);
     f = fopen(path, "r");
     if (f) {
-      char line[64];
-      if (fgets(line, sizeof(line), f)) {
-        value = ab_sens_parse(line);
+      /* primeira linha que NAO e comentario/vazia = o valor (o arquivo pode
+       * ter um cabecalho explicativo em cima). */
+      char line[96];
+      while (fgets(line, sizeof(line), f)) {
+        const char *t = line;
+        while (*t == ' ' || *t == '\t') t++;
+        if (*t == '#' || *t == '\n' || *t == '\r' || !*t)
+          continue;
+        value = ab_sens_parse(t);
         source = "sensitivity.txt";
+        break;
       }
       fclose(f);
     }
