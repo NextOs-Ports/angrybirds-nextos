@@ -5,10 +5,27 @@
   "executable": "angrybirds-nextos",
   "home_mode": "preserve",
   "id": "angrybirds",
+  "language": {
+    "default": "auto",
+    "supported": [
+      "en",
+      "pt-br",
+      "pt",
+      "es",
+      "fr",
+      "de",
+      "it",
+      "ru",
+      "pl",
+      "ar",
+      "zh-cn",
+      "zh-tw"
+    ]
+  },
   "launcher_name": "Angry Birds Classic.sh",
   "nxextract": {
     "mode": "yes",
-    "version": "1.2.11"
+    "version": "1.2.12"
   },
   "prepare_script": "",
   "private_library_paths": [],
@@ -30,22 +47,5 @@
   ],
   "runtime_report": "log-and-logo",
   "schema_version": 2,
-  "title": "Angry Birds Classic",
-  "language": {
-    "default": "auto",
-    "supported": [
-      "en",
-      "pt-br",
-      "pt",
-      "es",
-      "fr",
-      "de",
-      "it",
-      "ru",
-      "pl",
-      "ar",
-      "zh-cn",
-      "zh-tw"
-    ]
-  }
+  "title": "Angry Birds Classic"
 }

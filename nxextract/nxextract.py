@@ -33,7 +33,7 @@ import zipfile
 from pathlib import Path, PurePosixPath
 
 
-NXEXTRACT_VERSION = "1.2.11"
+NXEXTRACT_VERSION = "1.2.12"
 FORMAT_VERSION = 1
 TRANSACTION_FORMAT_VERSION = 2
 TERMINAL_RESULT_SCHEMA = "org.nextos.nxextract.terminal-result"
@@ -864,6 +864,24 @@ class Recipe:
                         "overlapping commit paths are not allowed: %s / %s"
                         % (left, right)
                     )
+        mutable = data.get("mutable", [])
+        if (not isinstance(mutable, list) or len(mutable) > 32 or
+                any(not isinstance(item, str) for item in mutable)):
+            raise RecipeError("mutable must be a list of at most 32 paths")
+        for item in mutable:
+            validate_relative_path(item, "mutable path")
+            if "{abi}" in item:
+                raise RecipeError("mutable path must not use {abi}: %s" % item)
+            if not any(
+                portable_path_key(item) == portable_path_key(plain)
+                or portable_path_key(item).startswith(
+                    portable_path_key(plain) + "/")
+                for plain in (
+                    entry.replace("{abi}", "ABI") for entry in normalized)):
+                raise RecipeError(
+                    "mutable path must live under a commit path: %s" % item)
+        if len({portable_path_key(item) for item in mutable}) != len(mutable):
+            raise RecipeError("duplicate mutable path")
         marker = data.get("marker", ".nxextract-%s.json" % identifier)
         validate_relative_path(marker, "marker")
         if paths_overlap(marker, log):
@@ -1278,6 +1296,12 @@ class Recipe:
         )
         validate_template_fields(check["path"], {"abi"}, "%s path" % label)
         self._validate_validation(check, label)
+
+    @property
+    def mutable_paths(self):
+        """P12: caminhos sob commit que o GUEST pode criar/alterar (saves
+        gravados junto dos assets). Ficam FORA do selo de metadados."""
+        return tuple(self.data.get("mutable", []))
 
     @property
     def identifier(self):
@@ -3137,15 +3161,23 @@ def validate_recipe_outputs(root, recipe, abi, plan=None, marker=None, full=True
     return checked
 
 
-def payload_metadata_seal(root, commit_paths):
-    """Cheap per-launch seal created only after a full payload validation."""
+def payload_metadata_seal(root, commit_paths, mutable_paths=()):
+    """Cheap per-launch seal created only after a full payload validation.
+    P12: objetos listados em mutable_paths (saves que o guest grava dentro do
+    payload) ficam FORA do selo — o jogo salvar nao pode invalidar o marker."""
     digest = hashlib.sha256()
     object_count = 0
     portable_objects = {}
+    mutable_keys = tuple(portable_path_key(item) for item in mutable_paths)
+
+    def is_mutable(key):
+        return any(key == mk or key.startswith(mk + "/") for mk in mutable_keys)
 
     def add_object(kind, relative, info=None):
         nonlocal object_count
         key = portable_path_key(relative)
+        if is_mutable(key):
+            return
         previous = portable_objects.get(key)
         if previous is not None and previous != relative:
             raise ValidationError(
@@ -3209,10 +3241,10 @@ def payload_metadata_seal(root, commit_paths):
     return digest.hexdigest(), object_count
 
 
-def marker_payload_seal_valid(marker, game_dir):
+def marker_payload_seal_valid(marker, game_dir, mutable_paths=()):
     try:
         actual_seal, actual_count = payload_metadata_seal(
-            game_dir, marker["commit"]
+            game_dir, marker["commit"], mutable_paths
         )
     except (OSError, NXError, KeyError, TypeError):
         return False
@@ -3860,7 +3892,7 @@ def recover_transaction(recipe, game_dir, workspace, marker_path, logger):
                     marker=marker,
                     full=True,
                 )
-                if not marker_payload_seal_valid(marker, game_dir):
+                if not marker_payload_seal_valid(marker, game_dir, recipe.mutable_paths):
                     raise ValidationError(
                         "published marker payload metadata seal mismatch"
                     )
@@ -3882,7 +3914,7 @@ def recover_transaction(recipe, game_dir, workspace, marker_path, logger):
 
 def _write_install_marker(marker_path, recipe, plan, transaction_id, game_dir):
     payload_seal, payload_objects = payload_metadata_seal(
-        game_dir, plan.commit_paths
+        game_dir, plan.commit_paths, recipe.mutable_paths
     )
     marker = {
         "format": FORMAT_VERSION,
@@ -4453,7 +4485,7 @@ def marker_fast_valid(marker_path, recipe, game_dir, logger):
     except (OSError, NXError) as error:
         logger.miss("marker-validation", "existing marker rejected: %s" % error)
         return None
-    if not marker_payload_seal_valid(marker, game_dir):
+    if not marker_payload_seal_valid(marker, game_dir, recipe.mutable_paths):
         logger.miss(
             "marker-validation",
             "existing marker rejected: payload metadata seal mismatch",
@@ -4907,7 +4939,7 @@ def verify_command(args):
     validate_recipe_outputs(
         game_dir, recipe, marker["abi"], marker=marker, full=True
     )
-    if not marker_payload_seal_valid(marker, game_dir):
+    if not marker_payload_seal_valid(marker, game_dir, recipe.mutable_paths):
         raise ValidationError("installation payload metadata seal mismatch")
     print(
         "OK: %s version %s, ABI %s"

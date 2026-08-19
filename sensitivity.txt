@@ -1,0 +1,4 @@
+normal
+# Sensibilidade do analogico esquerdo / Left-stick sensitivity.
+# Edite SO a primeira linha / Edit ONLY the first line:
+#   low | normal | high   (ou um numero / or a number 0.30 - 1.50)

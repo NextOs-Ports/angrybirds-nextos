@@ -12,6 +12,7 @@
 #include <GLES2/gl2.h>
 #include <SDL.h>
 #include <math.h>
+#include <ctype.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -82,6 +83,65 @@ static int g_cursor_draw_visible;
 static ab_exit_chord_state g_guide_exit_chord;
 
 static float g_stick_x, g_stick_y;
+
+/* v1.1.5 (pedido de tester): sensibilidade do analogico ESQUERDO configuravel.
+ * Fontes, em ordem: env NXPORT_STICK_SENSITIVITY > arquivo sensitivity.txt no
+ * diretorio do port. Valores: low (0.60) | normal (1.00) | high (1.30) ou um
+ * numero 0.30..1.50. So escala o que E ENTREGUE ao jogo (estilingue) e a
+ * velocidade do cursor; os limiares de posse do stick continuam no valor CRU
+ * (agarrar/soltar o estilingue nao muda com a sensibilidade). */
+static float g_stick_sens = 1.0f;
+
+static float ab_sens_parse(const char *text) {
+  char buffer[32];
+  size_t n = 0;
+  float value;
+  while (*text == ' ' || *text == '\t') text++;
+  while (text[n] && text[n] != '\n' && text[n] != '\r' &&
+         text[n] != ' ' && n < sizeof(buffer) - 1) {
+    buffer[n] = (char)tolower((unsigned char)text[n]);
+    n++;
+  }
+  buffer[n] = 0;
+  if (!buffer[0]) return -1.0f;
+  if (!strcmp(buffer, "low") || !strcmp(buffer, "baixa")) return 0.60f;
+  if (!strcmp(buffer, "normal") || !strcmp(buffer, "auto")) return 1.00f;
+  if (!strcmp(buffer, "high") || !strcmp(buffer, "alta")) return 1.30f;
+  value = (float)atof(buffer);
+  if (value >= 0.30f && value <= 1.50f) return value;
+  return -1.0f;
+}
+
+static void ab_sens_init(const char *root) {
+  const char *env = getenv("NXPORT_STICK_SENSITIVITY");
+  const char *source = "padrao";
+  float value = -1.0f;
+  if (env && *env) {
+    value = ab_sens_parse(env);
+    source = "env NXPORT_STICK_SENSITIVITY";
+  }
+  if (value < 0.0f && root && *root) {
+    char path[512];
+    FILE *f;
+    snprintf(path, sizeof(path), "%s/sensitivity.txt", root);
+    f = fopen(path, "r");
+    if (f) {
+      char line[64];
+      if (fgets(line, sizeof(line), f)) {
+        value = ab_sens_parse(line);
+        source = "sensitivity.txt";
+      }
+      fclose(f);
+    }
+  }
+  if (value < 0.0f) {
+    value = 1.0f;
+    source = "padrao";
+  }
+  g_stick_sens = value;
+  ab_log("[input] sensibilidade do analogico esquerdo = %.2f (%s)",
+         (double)g_stick_sens, source);
+}
 static int g_pinch_close, g_pinch_open;
 static int g_dpad_l, g_dpad_r;
 static int g_sling_input_owner;
@@ -179,7 +239,8 @@ void ab_input_init(void) {
 
   nxinput_config_init(&config);
   config.initialize_sdl = 0;
-  config.cursor_speed = 0.85f;
+  ab_sens_init(getenv("NXCOMPAT_GAME_DIR"));
+  config.cursor_speed = 0.85f * g_stick_sens;
   config.cursor_smoothing = 0.07f;
   g_input = nxinput_create(&config);
   if (!g_input)
@@ -463,7 +524,7 @@ void ab_input_pump(void) {
     }
 
     ab_lua_control_set_stick(
-        g_stick_x, g_stick_y,
+        g_stick_x * g_stick_sens, g_stick_y * g_stick_sens,
         g_camera_input_owner || g_cursor_buttons.touch_down ||
             g_disconnect_block_guard > 0);
     if (g_sling_release_guard > 0)
