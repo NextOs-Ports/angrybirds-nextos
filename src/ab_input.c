@@ -87,9 +87,11 @@ static float g_stick_x, g_stick_y;
 /* v1.1.5 (pedido de tester): sensibilidade do analogico ESQUERDO configuravel.
  * Fontes, em ordem: env NXPORT_STICK_SENSITIVITY > arquivo sensitivity.txt no
  * diretorio do port. Valores: low (0.60) | normal (1.00) | high (1.30) ou um
- * numero 0.30..1.50. So escala o que E ENTREGUE ao jogo (estilingue) e a
- * velocidade do cursor; os limiares de posse do stick continuam no valor CRU
- * (agarrar/soltar o estilingue nao muda com a sensibilidade). */
+ * numero 0.30..1.50. SEMANTICA: sensibilidade e RESPOSTA, nunca alcance —
+ * no estilingue (controle de POSICAO) aplicamos curva expo que PRESERVA as
+ * pontas: gamma = 1/valor, entao low = precisao perto do centro com estique
+ * TOTAL na borda; no cursor (controle de VELOCIDADE) o valor multiplica a
+ * velocidade. Limiares de posse do stick continuam no valor CRU. */
 static float g_stick_sens = 1.0f;
 
 static float ab_sens_parse(const char *text) {
@@ -523,10 +525,41 @@ void ab_input_pump(void) {
       ab_log("[camera] pan/zoom solto");
     }
 
-    ab_lua_control_set_stick(
-        g_stick_x * g_stick_sens, g_stick_y * g_stick_sens,
+    {
+      /* curva expo por MAGNITUDE (preserva direcao e as pontas 0 e 1) +
+       * SUAVIZACAO DE TAXA quando sens < 1: o vetor entregue PERSEGUE o
+       * analogico com velocidade limitada — movimento fino tambem esticado
+       * (girar a mira na borda), e continua alcancando qualquer posicao. */
+      static float g_dx, g_dy;
+      float mag = left_magnitude();
+      float shaped = 1.0f;
+      float tx, ty;
+      if (mag > 0.0001f && g_stick_sens > 0.0f) {
+        float m = mag > 1.0f ? 1.0f : mag;
+        shaped = powf(m, 1.0f / g_stick_sens) / mag;
+      }
+      tx = g_stick_x * shaped;
+      ty = g_stick_y * shaped;
+      if (g_stick_sens < 0.999f) {
+        float rate = 6.0f * g_stick_sens * dt; /* low=0.6 -> 3.6/s */
+        float ex = tx - g_dx, ey = ty - g_dy;
+        float ed = sqrtf(ex * ex + ey * ey);
+        if (ed > rate && ed > 0.0001f) {
+          g_dx += ex * (rate / ed);
+          g_dy += ey * (rate / ed);
+        } else {
+          g_dx = tx;
+          g_dy = ty;
+        }
+      } else {
+        g_dx = tx;
+        g_dy = ty;
+      }
+      ab_lua_control_set_stick(
+          g_dx, g_dy,
         g_camera_input_owner || g_cursor_buttons.touch_down ||
             g_disconnect_block_guard > 0);
+    }
     if (g_sling_release_guard > 0)
       g_sling_release_guard--;
     if (g_disconnect_block_guard > 0)

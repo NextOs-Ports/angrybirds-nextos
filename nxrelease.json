@@ -81,7 +81,7 @@
         "libz.so.1"
       ],
       "provenance": "port build script; framework pinned by FRAMEWORK-PIN.json",
-      "sha256": "2eba50b53e46496e8a1804b98114ec1b02ee791bc020863f2061f5d866a122a0",
+      "sha256": "8d102d77e9424540bd76116c169b3898571cf9f006ca3fda1ccac1996831379e",
       "soname": null,
       "source": "angrybirds-nextos",
       "target": "angrybirds/angrybirds-nextos"
@@ -153,7 +153,7 @@
     {
       "kind": "payload",
       "mode": "0644",
-      "sha256": "1c60df040a80b6d2e3f56442b17d127d8620cd773873e6e1353362f989b1deca",
+      "sha256": "2f66e2158a2645e2455e374272c8deb113173dca586f9159f813519a50436c32",
       "source": "version.txt",
       "target": "angrybirds/version.txt"
     },
@@ -269,7 +269,7 @@
     },
     "port_dir": "angrybirds",
     "profile": "universal-portmaster",
-    "version": "1.1.5"
+    "version": "1.1.6"
   },
   "portmaster_metadata": {
     "gameinfo_xml": {
