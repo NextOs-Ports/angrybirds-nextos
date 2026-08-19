@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.8 — 2026-08-19
+
+- Launcher regenerado com nxbootstrap 0.6.26: o validador do resultado do
+  NXExtract passou a ser compativel com engines futuros (crise dos updates
+  hibridos no muOS — launcher antigo + engine novo matava a instalacao com
+  "unknown terminal result schema"). Sem mudanca de gameplay.
+- Quem vem de versao anterior: faca instalacao LIMPA (apague a pasta
+  angrybirds E o "Angry Birds Classic.sh" antes de extrair).
+
 ## 1.1.2-test.3
 
 - Audio path revision exercised on ArkOS RK3326 / Mali-G31 with the exact
